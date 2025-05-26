@@ -1,60 +1,31 @@
 /*
- * 主題樣式變數設定 (可在本檔案中統一調整)
+ * 主題樣式變數設定 (由 CSS 變數生成器生成)
  * --------------------------------------------------------------------------
  */
 :root {
-    /* --- 顏色設定 --- */
-    --main-title-color: #0056b3; /* "我的圖片藝廊" 主標題顏色 */
-    --tile-title-color: #007bff; /* 圖片浮磚標題顏色 */
-    --background-color: #f0f2f5; /* 頁面背景色 */
-    --container-bg-color: #ffffff; /* 藝廊容器背景色 */
-    --item-bg-color: #ffffff; /* 圖片磚背景色 */
-    --text-color: #333; /* 藝廊描述等主要文字顏色 */
-    --secondary-text-color: #555; /* 次要文字顏色 (目前用於藝廊描述) */
-    --border-color: #e0e0e0; /* 邊框顏色 */
-    --hover-shadow: rgba(0, 0, 0, 0.2); /* 懸停陰影色 (RGBA 值請自行調整透明度) */
-    --lightbox-bg-color: rgba(0, 0, 0, 0.95); /* 浮動視窗背景色 (RGBA 值請自行調整透明度) */
-    --lightbox-caption-bg-color: rgba(0, 0, 0, 0.6); /* 浮動視窗文字背景色 (RGBA 值請自行調整透明度) */
-    --lightbox-text-color: #eee; /* 浮動視窗文字顏色 */
-    --close-button-color: #fff; /* 關閉按鈕顏色 */
-
-    /* --- 字體大小設定 --- */
-    --body-font-size: 16px; /* 基礎文字大小 (影響大部分文字) */
-    --main-title-font-size: 2.5em; /* "我的圖片藝廊" 主標題字體大小 */
-    --tile-title-font-size: 1.15em; /* 圖片浮磚標題字體大小 */
-    --description-font-size: 0.9em; /* 圖片描述字體大小 */
-    --lightbox-title-font-size: 1.3em; /* 浮動視窗標題字體大小 */
-    --lightbox-description-font-size: 1.1em; /* 浮動視窗描述字體大小 */
-    --close-button-font-size: 50px; /* 關閉按鈕字體大小 */
-
-
-    /* --- 背景圖片設定 (請將 'none' 替換為 'url("您的圖片網址或相對路徑")' 以啟用背景圖片) --- */
-    /* 範例：--body-background-image: url("https://example.com/your-background.jpg"); */
-    /* 或：--body-background-image: url("images/background-pattern.png"); */
-    /* 如果要移除背景圖片，請設回 'none'。 */
-    --body-background-image: none; /* 頁面背景圖片 */
-
-    /* 'auto': 圖片原始尺寸
-     * 'cover': 圖片會完全覆蓋背景區域，可能會裁切部分圖片
-     * 'contain': 圖片會完全顯示在背景區域內，可能會留下空白
-     * '100% 100%': 圖片寬高都拉伸至 100%
-     * '50%': 圖片寬高都為 50%
-     */
+    --main-title-color: #3b6d31; /* main-title-color */
+    --tile-title-color: #ff0066; /* tile-title-color */
+    --background-color: #2d65b9; /* background-color */
+    --container-bg-color: #c63939; /* container-bg-color */
+    --item-bg-color: #ffffff; /* item-bg-color */
+    --text-color: #333333; /* text-color */
+    --secondary-text-color: #555555; /* secondary-text-color */
+    --border-color: #e0e0e0; /* border-color */
+    --hover-shadow: rgba(0, 0, 0, 0.2);
+    --lightbox-bg-color: rgba(0, 0, 0, 0.95); /* lightbox-bg-color */
+    --lightbox-caption-bg-color: rgba(0, 0, 0, 0.6); /* lightbox-caption-bg-color */
+    --lightbox-text-color: #eeeeee; /* lightbox-text-color */
+    --close-button-color: #ffffff; /* close-button-color */
+    --body-font-size: 16px; /* body-font-size */
+    --main-title-font-size: 2.5em; /* main-title-font-size */
+    --tile-title-font-size: 1.15em; /* tile-title-font-size */
+    --description-font-size: 0.9em; /* description-font-size */
+    --lightbox-title-font-size: 1.3em; /* lightbox-title-font-size */
+    --lightbox-description-font-size: 1.1em; /* lightbox-description-font-size */
+    --close-button-font-size: 50px; /* close-button-font-size */
+    --body-background-image: url('https://pbs.twimg.com/media/Gr2MnK4X0AApzE5?format=jpg&name=small'); /* 頁面背景圖片 */
     --body-background-size: auto; /* 背景圖片尺寸 */
-
-    /* 'center center': 居中 (預設)
-     * 'top left': 左上
-     * 'bottom right': 右下
-     * '50% 50%': 居中
-     * '20px 30px': 距離左邊 20px，距離頂部 30px
-     */
     --body-background-position: center center; /* 背景圖片位置 */
-
-    /* 'repeat': 水平垂直都重複 (預設)
-     * 'no-repeat': 不重複
-     * 'repeat-x': 只水平重複
-     * 'repeat-y': 只垂直重複
-     */
     --body-background-repeat: repeat; /* 背景圖片重複方式 */
 }
 /* -------------------------------------------------------------------------- */
