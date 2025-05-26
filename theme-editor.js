@@ -39,14 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let iframeLoaded = false; // 標誌，確保 iframe 載入後才操作
     let iframeRoot = null; // 儲存 iframe 內部文檔的 :root 元素
-    let iframeBody = null; // 儲存 iframe 內部文檔的 body 元素
+    // let iframeBody = null; // 不再需要這個變數
 
     // 在 iframe 載入完成後執行
     previewIframe.onload = () => {
         iframeLoaded = true;
         // 獲取 iframe 內部的 :root 元素 (document.documentElement)
         iframeRoot = previewIframe.contentWindow.document.documentElement;
-        iframeBody = previewIframe.contentWindow.document.body;
 
         // 載入 localStorage 中保存的設定 (如果有的話)
         loadSavedSettings();
@@ -75,17 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentSettings = {};
         editorPanel.querySelectorAll('[data-css-var]').forEach(input => {
-            const cssVar = input.dataset.cssVar; // 獲取 data-css-var 屬性值
+            const propName = input.id; // 例如 'primaryColor'
             let value = input.value;
 
             // 對於背景圖片 URL，如果是空字符串則設置為 'none'
-            if (input.id === 'backgroundImageUrl' && value === '') {
+            if (propName === 'backgroundImageUrl' && value === '') {
                 value = 'none';
-            } else if (input.id === 'backgroundImageUrl' && value !== 'none') {
+            } else if (propName === 'backgroundImageUrl' && value !== 'none') {
                 value = `url('${value}')`; // 將 URL 包裝成 url() 函數
             }
 
-            currentSettings[cssVar.replace('--', '')] = value; // 移除 --
+            currentSettings[propName] = value; // 這裡直接使用 id 作為 key，而不是 data-css-var，方便直接對應 defaultSettings
         });
         applySettingsToIframe(currentSettings);
     }
@@ -96,15 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
-                // 對於 `hoverShadow`, `lightboxBgColor`, `lightboxCaptionBgColor`
-                // 由於它們在 CSS 中是 rgba 格式 (例如 rgba(var(--hover-shadow), 0.2))
-                // 我們只傳遞顏色值 (例如 #333333)，透明度由 CSS 處理。
-                // 對於背景圖片相關的變數，直接設定
-                if (key.startsWith('body-background-')) {
-                     iframeRoot.style.setProperty(`--${key}`, settings[key]);
-                } else {
-                     iframeRoot.style.setProperty(`--${key}`, settings[key]);
-                }
+                // `key` 是例如 `primaryColor`, `backgroundColor`
+                // CSS 變數名是 `--primary-color`, `--background-color`
+                iframeRoot.style.setProperty(`--${key}`, settings[key]);
             }
         }
     }
@@ -127,20 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url); // 清理 URL
     }
 
-    // 下載 HTML
+    // 下載 HTML (保持不變，因為 HTML 結構沒有變動)
     downloadHtmlBtn.addEventListener('click', () => {
-        if (!iframeLoaded || !iframeRoot) return alert('預覽頁面尚未載入完成。');
-
-        const htmlContent = previewIframe.contentWindow.document.documentElement.outerHTML;
-        // 移除 style.css 和 script.js 的預設值，因為主題是應用在變數上
-        // 這裡需要獲取iframe的完整html，包含當前生效的css變量
-        // 但直接獲取 outerHTML 會包含編輯器動態添加的樣式，不是原始樣式。
-        // 最好的方法是基於原始 index.html 模板，替換其中的 CSS 變數默認值
-        // 但那樣需要載入原始文件內容，較為複雜。
-        // 簡單做法：將 iframe 內當前計算出的 CSS 變數值注入到 style 標籤中
-        // 或者直接下載一個包含所有當前 CSS 變數的 style.css
-        // 我們選擇下載一個包含所有當前變數的 style.css
-
         let finalHtml = `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -166,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadFile('index.html', finalHtml, 'text/html');
     });
 
-    // 下載 CSS
+    // 下載 CSS (修正邏輯)
     downloadCssBtn.addEventListener('click', async () => {
         if (!iframeLoaded || !iframeRoot) return alert('預覽頁面尚未載入完成。');
 
@@ -174,66 +155,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch('style.css');
         let cssContent = await response.text();
 
-        // 獲取當前 iframe 中的所有 CSS 變數值
-        const currentCssVars = {};
-        const computedStyle = getComputedStyle(iframeRoot); // 獲取計算後的樣式
-        for (const key in defaultSettings) { // 遍歷所有預設變數
-            const cssVarName = `--${key}`;
-            let value = computedStyle.getPropertyValue(cssVarName).trim();
-
-            // 如果背景圖片 URL 變成了 url("none")，則轉換回 "none" 或空字符串
-            if (key === 'body-background-image') {
-                if (value.startsWith('url("') && value.endsWith('")') && value.includes('none')) {
-                    value = 'none'; // 實際應該是 ''
-                } else if (value.startsWith('url("') && value.endsWith('")')) {
-                    value = value.substring(5, value.length - 2); // 提取 URL
-                }
-            }
-            currentCssVars[cssVarName] = value;
-        }
+        // 獲取當前編輯器 UI 中的所有 CSS 變數值
+        const currentEditorSettings = {};
+        editorPanel.querySelectorAll('[data-css-var]').forEach(input => {
+            currentEditorSettings[input.id] = input.value;
+        });
 
         // 替換 CSS 內容中的 :root 變數
         const rootRegex = /:root\s*\{([\s\S]*?)\}/;
         cssContent = cssContent.replace(rootRegex, (match, p1) => {
             let newVars = '';
-            for (const varName in currentCssVars) {
-                let varValue = currentCssVars[varName];
-                // 對於透明度，如果變數是 `rgba(..., 0.X)` 且我們只存顏色，
-                // 這裡需要判斷並修正，例如，如果原來的 CSS 是 rgba(var(--color), 0.2)
-                // 我們只替換 --color 的值，而不是整個 rgba
-                // 這裡我們假設 style.css 中 rgba 裡面的 alpha 值是固定的，我們只更新顏色部分。
-                if (varName === '--hover-shadow') varValue = `${varValue}`; // 保持原始 style.css 的邏輯，不需要 rgba
-                if (varName === '--lightbox-bg-color') varValue = `${varValue}`;
-                if (varName === '--lightbox-caption-bg-color') varValue = `${varValue}`;
-                if (varName === '--body-background-image' && varValue === 'none') {
-                    varValue = 'none'; // 確保為 none
-                } else if (varName === '--body-background-image' && varValue.startsWith('url(')) {
-                    // 如果用戶輸入了有效的 URL，並且它被轉換為 url('') 形式
-                    // 則保留 url('') 形式
-                    // 否則，如果是 'none'，則保持 'none'
+            for (const propName in defaultSettings) { // 遍歷所有預設變數名稱
+                let varValue = currentEditorSettings[propName]; // 從當前編輯器中獲取值
+
+                // 如果值為空字符串，且是背景圖片 URL，則設置為 'none'
+                if (propName === 'backgroundImageUrl' && varValue === '') {
+                    varValue = 'none';
+                } else if (propName === 'backgroundImageUrl' && varValue !== 'none') {
+                    varValue = `url('${varValue}')`; // 確保 URL 格式正確
                 }
-                 newVars += `    ${varName}: ${varValue};\n`;
+
+                // 構建 CSS 變數行
+                newVars += `    --${propName}: ${varValue};\n`;
             }
             return `:root {\n${newVars}}`;
         });
 
-        // 處理背景圖片 URL，如果用戶輸入了，需要將其轉換回 url('') 形式
-        const backgroundImageUrlInput = document.getElementById('backgroundImageUrl');
-        let finalImageUrl = backgroundImageUrlInput.value;
-        if (finalImageUrl !== '') {
-            cssContent = cssContent.replace(`--body-background-image: none;`, `--body-background-image: url('${finalImageUrl}');`);
-        } else {
-             cssContent = cssContent.replace(`--body-background-image: url('${finalImageUrl}');`, `--body-background-image: none;`);
-        }
-
-
         downloadFile('style.css', cssContent, 'text/css');
     });
 
-    // 下載 JS (script.js)
+    // 下載 JS (script.js 保持下載原始檔案)
     downloadJsBtn.addEventListener('click', async () => {
-        // script.js 基本上不需要因為主題而改變，除非您想將主題預設值寫死進去
-        // 為了簡單和保持彈性，我們下載原始的 script.js
         const response = await fetch('script.js');
         const jsContent = await response.text();
         downloadFile('script.js', jsContent, 'application/javascript');
@@ -260,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初始載入時，確保 iframe 載入完成再載入設定
-    // 如果 iframe 已經載入，則直接載入設定
     if (previewIframe.contentWindow && previewIframe.contentWindow.document.readyState === 'complete') {
         previewIframe.onload(); // 手動觸發 onload
     }
@@ -271,12 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
         editorPanel.querySelectorAll('[data-css-var]').forEach(input => {
             const propName = input.id;
             let value = input.value;
-            if (propName === 'backgroundImageUrl' && value === '') {
-                value = 'none'; // 儲存 'none' 或空字符串
-            } else if (propName === 'backgroundImageUrl') {
-                value = `url('${value}')`;
+            // 只有背景圖片URL需要特別處理儲存格式
+            if (propName === 'backgroundImageUrl') {
+                currentSettings[propName] = value; // 儲存為原始 URL 或空字串
+            } else {
+                currentSettings[propName] = value;
             }
-            currentSettings[propName] = value;
         });
         localStorage.setItem('galleryThemeSettings', JSON.stringify(currentSettings));
     });
