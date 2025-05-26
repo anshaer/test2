@@ -1,0 +1,230 @@
+/* style.css (與之前提供的使用 CSS 變數的版本相同) */
+:root {
+    --primary-color: #0056b3;
+    --background-color: #f0f2f5;
+    --container-bg-color: #ffffff;
+    --item-bg-color: #ffffff;
+    --text-color: #333;
+    --secondary-text-color: #555;
+    --border-color: #e0e0e0;
+    --hover-shadow: rgba(0, 0, 0, 0.2);
+    --lightbox-bg-color: rgba(0, 0, 0, 0.95);
+    --lightbox-caption-bg-color: rgba(0, 0, 0, 0.6);
+    --lightbox-text-color: #eee;
+    --close-button-color: #fff;
+    --body-background-image: none; /* 新增變數，用於背景圖片 */
+    --body-background-size: auto; /* 新增變數，用於背景圖片尺寸 */
+    --body-background-position: center center; /* 新增變數，用於背景圖片位置 */
+    --body-background-repeat: repeat; /* 新增變數，用於背景圖片重複 */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    background-image: var(--body-background-image); /* 使用變數 */
+    background-size: var(--body-background-size); /* 使用變數 */
+    background-position: var(--body-background-position); /* 使用變數 */
+    background-repeat: var(--body-background-repeat); /* 使用變數 */
+}
+
+/* 確保其他部分與之前提供的使用 CSS 變數的版本完全相同 */
+/* ... (從之前的 style.css 複製所有內容到這裡，包括媒體查詢) ... */
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    padding: 20px 0;
+    margin-bottom: 0;
+    background-color: var(--container-bg-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: var(--container-bg-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-item {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: var(--item-bg-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px var(--hover-shadow);
+}
+
+.image-wrapper {
+    width: 100%;
+    padding-bottom: 75%;
+    position: relative;
+    overflow: hidden;
+    background-color: #eee;
+}
+
+.image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+.image-info {
+    padding: 15px;
+    background-color: var(--item-bg-color);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.image-info h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    font-size: 1.15em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-info p {
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: var(--secondary-text-color);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0;
+}
+
+/* Lightbox styles */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--lightbox-bg-color);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.lightbox-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-caption {
+    margin: 20px auto;
+    display: block;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    color: var(--lightbox-text-color);
+    padding: 15px 20px;
+    background-color: var(--lightbox-caption-bg-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.lightbox-caption h3 {
+    color: var(--close-button-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.lightbox-caption p {
+    font-size: 1.1em;
+    line-height: 1.5;
+    color: var(--lightbox-text-color);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.close-button {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    color: var(--close-button-color);
+    font-size: 50px;
+    font-weight: lighter;
+    transition: 0.3s ease;
+    cursor: pointer;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #aaa;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .gallery-container {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .gallery-item img {
+        height: auto;
+    }
+    .image-info {
+        padding: 10px;
+    }
+    .image-info h3 {
+        font-size: 1em;
+    }
+    .image-info p {
+        font-size: 0.8em;
+    }
+    .lightbox-content {
+        max-width: 95%;
+        max-height: 80vh;
+    }
+    .lightbox-caption {
+        width: 95%;
+        padding: 10px;
+    }
+    .close-button {
+        font-size: 40px;
+        top: 10px;
+        right: 15px;
+    }
+}
