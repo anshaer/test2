@@ -3,10 +3,10 @@
  * --------------------------------------------------------------------------
  */
 :root {
-    --main-title-color: #3b6d31; /* main-title-color */
-    --tile-title-color: #ff0066; /* tile-title-color */
-    --background-color: #2d65b9; /* background-color */
-    --container-bg-color: #c63939; /* container-bg-color */
+    --main-title-color: #0056b3; /* main-title-color */
+    --tile-title-color: #007bff; /* tile-title-color */
+    --background-color: #f0f2f5; /* background-color */
+    --container-bg-color: #ffffff; /* container-bg-color */
     --item-bg-color: #ffffff; /* item-bg-color */
     --text-color: #333333; /* text-color */
     --secondary-text-color: #555555; /* secondary-text-color */
@@ -23,7 +23,7 @@
     --lightbox-title-font-size: 1.3em; /* lightbox-title-font-size */
     --lightbox-description-font-size: 1.1em; /* lightbox-description-font-size */
     --close-button-font-size: 50px; /* close-button-font-size */
-    --body-background-image: url('https://pbs.twimg.com/media/Gr2MnK4X0AApzE5?format=jpg&name=small'); /* 頁面背景圖片 */
+    --body-background-image: none; /* 頁面背景圖片 */
     --body-background-size: auto; /* 背景圖片尺寸 */
     --body-background-position: center center; /* 背景圖片位置 */
     --body-background-repeat: repeat; /* 背景圖片重複方式 */
