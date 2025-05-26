@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 變數生成器 - 附即時預覽</title>
+    <style>
+        /*
+         * 注意：預覽區域的樣式已改為直接依賴頁面根元素 (document.documentElement) 的 CSS 變數。
+         * 這樣當變數值改變時，整個頁面和預覽都會立即更新。
+         */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color, #f4f7f6); /* 使用變數，並提供備用值 */
+            color: var(--text-color, #333);
+            line-height: 1.6;
+            font-size: var(--body-font-size, 16px);
+            background-image: var(--body-background-image, none);
+            background-size: var(--body-background-size, auto);
+            background-position: var(--body-background-position, center center);
+            background-repeat: var(--body-background-repeat, repeat);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: var(--container-bg-color, #ffffff);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--main-title-color, #0056b3);
+            margin-bottom: 10px;
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--secondary-text-color, #555);
+            font-size: 0.95em;
+        }
+        .intro-text p {
+            margin-bottom: 8px;
+        }
+        .intro-text strong {
+            color: var(--main-title-color, #0056b3);
+        }
+
+
+        .section-title {
+            color: var(--tile-title-color, #007bff); /* 使用一個顏色變數來控制此標題色 */
+            border-bottom: 2px solid var(--border-color, #e0e0e0);
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            flex: 0 0 180px;
+            font-weight: bold;
+            color: var(--secondary-text-color, #444); /* 使用一個顏色變數 */
+            text-align: right;
+        }
+        
+        .form-group .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="url"],
+        .form-group select {
+            padding: 10px;
+            border: 1px solid var(--border-color, #ccc);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            flex-grow: 1;
+            min-width: 150px;
+        }
+
+        .form-group input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .color-value-display {
+            font-family: monospace;
+            color: var(--text-color, #666); /* 使用一個顏色變數 */
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .tip-text {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            text-align: right;
+            padding-right: 15px; /* 與 input 框對齊 */
+        }
+        .form-group .tip-text {
+            flex-basis: 100%; /* 讓提示文字獨佔一行 */
+            text-align: left;
+            margin-left: 195px; /* 與 label 寬度對齊 */
+            margin-top: -5px;
+        }
+        @media (max-width: 768px) {
+            .form-group .tip-text {
+                margin-left: 0;
+                padding-left: 0;
+                text-align: left;
+            }
+        }
+
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 25px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button.download-btn {
+            background-color: var(--tile-title-color, #007bff); /* 使用變數 */
+            color: var(--close-button-color, white); /* 使用變數 */
+        }
+
+        button.download-btn:hover {
+            background-color: var(--main-title-color, #0056b3); /* 使用變數 */
+            transform: translateY(-2px);
+        }
+
+        /* 預覽區塊樣式 */
+        .preview-area {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px dashed var(--border-color, #aaa);
+            border-radius: 8px;
+            background-color: var(--container-bg-color, #f9f9f9); /* 模擬藝廊單項背景 */
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            /* 讓預覽區塊也能繼承 body 的背景圖片，以便預覽效果 */
+            background-image: var(--body-background-image, none);
+            background-size: var(--body-background-size, auto);
+            background-position: var(--body-background-position, center center);
+            background-repeat: var(--body-background-repeat, repeat);
+        }
+
+        .preview-title {
+            font-size: var(--main-title-font-size, 2.5em);
+            color: var(--main-title-color, #0056b3);
+            margin-bottom: 15px;
+        }
+
+        .preview-description {
+            color: var(--secondary-text-color, #555);
+            font-size: var(--description-font-size, 0.9em);
+        }
+
+        .preview-item-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap; /* 允許項目換行 */
+        }
+
+        .preview-item {
+            width: 250px;
+            border: 1px solid var(--border-color, #e0e0e0);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: var(--item-bg-color, #ffffff);
+            box-shadow: 0 4px 8px var(--hover-shadow, rgba(0, 0, 0, 0.1)); /* 使用懸停陰影變數 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .preview-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px var(--hover-shadow, rgba(0, 0, 0, 0.2));
+        }
+
+        .preview-img-placeholder {
+            width: 100%;
+            height: 150px; /* 固定高度，模擬圖片 */
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            color: #777;
+            border-bottom: 1px solid var(--border-color, #e0e0e0);
+            border-top-left-radius: 9px;
+            border-top-right-radius: 9px;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-img-placeholder.has-image {
+            background-size: var(--body-background-size, cover); /* 圖片佔滿 */
+            background-position: var(--body-background-position, center center);
+            background-repeat: var(--body-background-repeat, no-repeat); /* 預覽圖片通常不重複 */
+            background-color: transparent; /* 如果有圖片，背景色透明 */
+        }
+        .preview-img-placeholder.has-image span {
+            display: none; /* 如果有圖片，隱藏文字 */
+        }
+
+
+        .preview-item-info {
+            padding: 15px;
+        }
+
+        .preview-item-info h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--tile-title-color, #007bff);
+            font-size: var(--tile-title-font-size, 1.15em);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-item-info p {
+            font-size: var(--description-font-size, 0.9em);
+            line-height: 1.4;
+            color: var(--secondary-text-color, #555);
+            margin-bottom: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .preview-item.lightbox-mock {
+            position: relative;
+            z-index: 10;
+            overflow: visible;
+        }
+
+        .preview-close-button {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            color: var(--close-button-color, #fff);
+            background-color: var(--lightbox-bg-color, rgba(0, 0, 0, 0.7)); /* 使用 lightbox 背景色 */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--close-button-font-size, 30px);
+            font-weight: lighter;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s;
+            line-height: 1;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); /* 模擬原始的陰影 */
+        }
+        .preview-close-button:hover {
+            background-color: rgba(0, 0, 0, 0.9); /* 懸停時加深 */
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .form-group label {
+                text-align: left;
+                flex: none;
+                width: 100%;
+            }
+            .form-group .input-wrapper {
+                flex-direction: column;
+                width: 100%;
+            }
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group input[type="url"],
+            .form-group select {
+                width: 100%;
+            }
+            .color-value-display {
+                width: 100%;
+                text-align: left;
+            }
+            .preview-item-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .preview-item {
+                width: 100%;
+                max-width: 300px;
+            }
+            .form-group .tip-text {
+                margin-left: 0;
+                padding-left: 0;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS 主題變數生成器</h1>
+        <div class="intro-text">
+            <p>歡迎使用此工具客製化您的藝廊網站主題！</p>
+            <p>請在下方設定各項變數，您可以<strong>即時在頁面下方預覽效果</strong>。</p>
+            <p>設定完成後，點擊「下載 variables.css」按鈕，將檔案儲存到您的專案根目錄，並在 `index.html` 中引入它。</p>
+            <p><strong>💡 小提示：</strong> 您可以重複下載與嘗試，直到滿意為止！</p>
+        </div>
+
+        <p class="section-title">顏色設定</p>
+        <div class="form-group">
+            <label for="mainTitleColor">主標題顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="mainTitleColor" data-css-var="--main-title-color" value="#0056b3">
+                <input type="text" id="mainTitleColorValue" class="color-text-input" data-css-var="--main-title-color" value="#0056b3">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tileTitleColor">圖片浮磚標題顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="tileTitleColor" data-css-var="--tile-title-color" value="#007bff">
+                <input type="text" id="tileTitleColorValue" class="color-text-input" data-css-var="--tile-title-color" value="#007bff">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="backgroundColor">頁面背景色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="backgroundColor" data-css-var="--background-color" value="#f0f2f5">
+                <input type="text" id="backgroundColorValue" class="color-text-input" data-css-var="--background-color" value="#f0f2f5">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="containerBgColor">藝廊容器背景色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="containerBgColor" data-css-var="--container-bg-color" value="#ffffff">
+                <input type="text" id="containerBgColorValue" class="color-text-input" data-css-var="--container-bg-color" value="#ffffff">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="itemBgColor">圖片磚背景色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="itemBgColor" data-css-var="--item-bg-color" value="#ffffff">
+                <input type="text" id="itemBgColorValue" class="color-text-input" data-css-var="--item-bg-color" value="#ffffff">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="textColor">主要文字顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="textColor" data-css-var="--text-color" value="#333333">
+                <input type="text" id="textColorValue" class="color-text-input" data-css-var="--text-color" value="#333333">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="secondaryTextColor">次要文字顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="secondaryTextColor" data-css-var="--secondary-text-color" value="#555555">
+                <input type="text" id="secondaryTextColorValue" class="color-text-input" data-css-var="--secondary-text-color" value="#555555">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="borderColor">邊框顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="borderColor" data-css-var="--border-color" value="#e0e0e0">
+                <input type="text" id="borderColorValue" class="color-text-input" data-css-var="--border-color" value="#e0e0e0">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="hoverShadow">懸停陰影色 (RGBA):</label>
+            <div class="input-wrapper">
+                <input type="text" id="hoverShadow" data-css-var="--hover-shadow" value="rgba(0, 0, 0, 0.2)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lightboxBgColor">浮動視窗背景色 (RGBA):</label>
+            <div class="input-wrapper">
+                <input type="text" id="lightboxBgColor" data-css-var="--lightbox-bg-color" value="rgba(0, 0, 0, 0.95)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lightboxCaptionBgColor">浮動視窗文字背景色 (RGBA):</label>
+            <div class="input-wrapper">
+                <input type="text" id="lightboxCaptionBgColor" data-css-var="--lightbox-caption-bg-color" value="rgba(0, 0, 0, 0.6)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lightboxTextColor">浮動視窗文字顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="lightboxTextColor" data-css-var="--lightbox-text-color" value="#eeeeee">
+                <input type="text" id="lightboxTextColorValue" class="color-text-input" data-css-var="--lightbox-text-color" value="#eeeeee">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="closeButtonColor">關閉按鈕顏色:</label>
+            <div class="input-wrapper">
+                <input type="color" id="closeButtonColor" data-css-var="--close-button-color" value="#ffffff">
+                <input type="text" id="closeButtonColorValue" class="color-text-input" data-css-var="--close-button-color" value="#ffffff">
+            </div>
+        </div>
+
+        <p class="section-title">字體大小設定</p>
+        <div class="form-group">
+            <label for="bodyFontSize">基礎文字大小 (px):</label>
+            <div class="input-wrapper">
+                <input type="number" id="bodyFontSize" data-css-var="--body-font-size" data-unit="px" value="16" min="8" step="1"> px
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mainTitleFontSize">主標題字體大小 (em):</label>
+            <div class="input-wrapper">
+                <input type="number" id="mainTitleFontSize" data-css-var="--main-title-font-size" data-unit="em" value="2.5" min="0.5" step="0.1"> em
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tileTitleFontSize">浮磚標題字體大小 (em):</label>
+            <div class="input-wrapper">
+                <input type="number" id="tileTitleFontSize" data-css-var="--tile-title-font-size" data-unit="em" value="1.15" min="0.5" step="0.05"> em
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="descriptionFontSize">圖片描述字體大小 (em):</label>
+            <div class="input-wrapper">
+                <input type="number" id="descriptionFontSize" data-css-var="--description-font-size" data-unit="em" value="0.9" min="0.5" step="0.05"> em
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lightboxTitleFontSize">浮動視窗標題字體大小 (em):</label>
+            <div class="input-wrapper">
+                <input type="number" id="lightboxTitleFontSize" data-css-var="--lightbox-title-font-size" data-unit="em" value="1.3" min="0.5" step="0.1"> em
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lightboxDescriptionFontSize">浮動視窗描述字體大小 (em):</label>
+            <div class="input-wrapper">
+                <input type="number" id="lightboxDescriptionFontSize" data-css-var="--lightbox-description-font-size" data-unit="em" value="1.1" min="0.5" step="0.1"> em
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="closeButtonFontSize">關閉按鈕字體大小 (px):</label>
+            <div class="input-wrapper">
+                <input type="number" id="closeButtonFontSize" data-css-var="--close-button-font-size" data-unit="px" value="50" min="20" step="5"> px
+            </div>
+        </div>
+
+        <p class="section-title">背景圖片設定</p>
+        <div class="form-group">
+            <label for="bodyBackgroundImage">頁面背景圖片 URL:</label>
+            <div class="input-wrapper">
+                <input type="text" id="bodyBackgroundImage" data-css-var="--body-background-image" placeholder="例如: images/bg.jpg 或 none" value="none">
+            </div>
+        </div>
+        <p class="tip-text">提示：請輸入圖片路徑，例如 `images/your-background.jpg`。留空或輸入 `none` 則無背景圖片。</p>
+        <div class="form-group">
+            <label for="bodyBackgroundSize">背景圖片尺寸:</label>
+            <div class="input-wrapper">
+                <select id="bodyBackgroundSize" data-css-var="--body-background-size">
+                    <option value="auto">auto (原尺寸)</option>
+                    <option value="cover">cover (覆蓋整個元素)</option>
+                    <option value="contain">contain (完整顯示圖片)</option>
+                    <option value="100% 100%">100% 100% (拉伸至滿)</option>
+                    <option value="50%">50% (按比例縮小)</option>
+                    <option value="custom">自定義 (請輸入)</option>
+                </select>
+                <input type="text" id="bodyBackgroundSizeCustom" placeholder="例如: 200px 150px" style="display: none;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bodyBackgroundPosition">背景圖片位置:</label>
+            <div class="input-wrapper">
+                <select id="bodyBackgroundPosition" data-css-var="--body-background-position">
+                    <option value="center center">center center (居中)</option>
+                    <option value="top left">top left (左上)</option>
+                    <option value="bottom right">bottom right (右下)</option>
+                    <option value="50% 50%">50% 50% (居中)</option>
+                    <option value="custom">自定義 (請輸入)</option>
+                </select>
+                <input type="text" id="bodyBackgroundPositionCustom" placeholder="例如: 20px 30px" style="display: none;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bodyBackgroundRepeat">背景圖片重複方式:</label>
+            <div class="input-wrapper">
+                <select id="bodyBackgroundRepeat" data-css-var="--body-background-repeat">
+                    <option value="repeat">repeat (重複)</option>
+                    <option value="no-repeat">no-repeat (不重複)</option>
+                    <option value="repeat-x">repeat-x (橫向重複)</option>
+                    <option value="repeat-y">repeat-y (縱向重複)</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="downloadVariablesBtn" class="download-btn">下載 variables.css</button>
+
+        <div class="preview-area">
+            <h2 class="preview-title">我的圖片藝廊 - 預覽</h2>
+            <p class="preview-description">
+                這是一段藝廊的描述文字。你可以看到主題顏色和文字大小的變化。
+            </p>
+            <div class="preview-item-container">
+                <div class="preview-item">
+                    <div class="preview-img-placeholder" id="previewImagePlaceholder1">
+                        <span>預覽圖片</span>
+                    </div>
+                    <div class="preview-item-info">
+                        <h3>預覽圖片標題</h3>
+                        <p>這是預覽圖片的簡短描述。觀察文字顏色和大小。</p>
+                    </div>
+                </div>
+                <div class="preview-item lightbox-mock">
+                    <div class="preview-close-button" style="font-size: var(--close-button-font-size, 30px);">&times;</div>
+                    <div class="preview-img-placeholder" id="previewImagePlaceholder2" style="background-color: var(--lightbox-bg-color, rgba(0,0,0,0.95));">
+                        <span style="color: var(--lightbox-text-color, #eee);">浮動視窗背景</span>
+                    </div>
+                    <div class="preview-item-info" style="background-color: var(--lightbox-caption-bg-color, rgba(0,0,0,0.6));">
+                        <h3 style="color: var(--lightbox-text-color, #eee); font-size: var(--lightbox-title-font-size, 1.3em);">浮動視窗標題</h3>
+                        <p style="color: var(--lightbox-text-color, #eee); font-size: var(--lightbox-description-font-size, 1.1em);">這是浮動視窗的描述。注意文字顏色和大小。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadVariablesBtn = document.getElementById('downloadVariablesBtn');
+            const rootElement = document.documentElement; // HTML 的根元素
+
+            // --- 即時預覽更新函數 ---
+            function updatePreview() {
+                // 遍歷所有帶有 data-css-var 屬性的 input/select 元素
+                document.querySelectorAll('[data-css-var]').forEach(input => {
+                    const cssVar = input.dataset.cssVar;
+                    let value = input.value;
+                    const unit = input.dataset.unit; // 獲取單位（例如 px, em）
+
+                    // 特殊處理顏色輸入框的文本值
+                    if (input.type === 'color') {
+                        // 確保文本輸入框的值是正確的 HEX 值
+                        const textInput = document.getElementById(input.id + 'Value');
+                        if (textInput) {
+                            textInput.value = value; // 同步顏色選擇器到文本框
+                        }
+                    } else if (input.classList.contains('color-text-input')) {
+                        // 確保文本輸入框的值能同步到顏色選擇器 (針對有效 HEX)
+                        const colorInput = document.getElementById(input.id.replace('Value', ''));
+                        // 僅當值是有效的 HEX 顏色時才更新顏色選擇器
+                        if (colorInput && value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+                            colorInput.value = value;
+                        }
+                    }
+
+                    // 處理數字類型，添加單位
+                    if (unit && !isNaN(parseFloat(value))) { // 使用 parseFloat 允許小數
+                        value += unit;
+                    }
+
+                    // 處理背景圖片 URL 格式
+                    if (cssVar === '--body-background-image') {
+                        // 清理空白符
+                        value = value.trim();
+                        // 如果值不是 'none' 且不為空，並且沒有 'url(' 前綴，則添加
+                        if (value !== 'none' && value !== '' && !value.startsWith('url(') && !value.endsWith(')')) {
+                            value = `url('${value}')`;
+                        } else if (value.trim().match(/^url\(['"]?\s*\)$/)) { // 檢查是否是空的 url()
+                            value = 'none'; // 如果是空 URL，視為 none
+                        }
+                    }
+
+                    // 處理自定義選擇框的值
+                    if (input.tagName === 'SELECT' && value === 'custom') {
+                        const customInputId = input.id + 'Custom';
+                        const customInput = document.getElementById(customInputId);
+                        if (customInput) {
+                            // 從自定義輸入框獲取值，如果為空則給予預設值
+                            value = customInput.value || (cssVar === '--body-background-size' ? 'auto' : 'center center');
+                            customInput.style.display = 'block';
+                        }
+                    } else if (input.id.endsWith('Custom')) {
+                        // 如果是自定義輸入框本身，且其對應的 select 不是 'custom'，則隱藏
+                        const selectId = input.id.replace('Custom', '');
+                        const selectElement = document.getElementById(selectId);
+                        if (selectElement && selectElement.value !== 'custom') {
+                            input.style.display = 'none';
+                            input.value = ''; // 清空值，避免下載時包含舊的自定義值
+                        }
+                    }
+
+                    // 更新 CSS 變數到 HTML 根元素
+                    rootElement.style.setProperty(cssVar, value);
+                });
+
+                // --- 特殊處理預覽區塊的背景圖片類別 ---
+                // 這個部分仍然需要，因為 body 上的背景圖會應用到 preview-area
+                const backgroundImageInput = document.getElementById('bodyBackgroundImage');
+                const previewImagePlaceholder1 = document.getElementById('previewImagePlaceholder1');
+                
+                // 判斷是否為有效的非空 URL（排除了 'none' 和空的 'url()'）
+                if (backgroundImageInput.value.trim() !== 'none' && backgroundImageInput.value.trim() !== '' && !backgroundImageInput.value.trim().match(/^url\(['"]?\s*\)$/)) {
+                    previewImagePlaceholder1.classList.add('has-image');
+                } else {
+                    previewImagePlaceholder1.classList.remove('has-image');
+                }
+            }
+
+            // --- 事件監聽器 ---
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', updatePreview); 
+                input.addEventListener('change', updatePreview); 
+            });
+
+            // 初始化載入時調用一次預覽更新，確保預設值顯示正確
+            updatePreview();
+
+            // --- 下載按鈕邏輯 (與之前相同，但確保從最新的 DOM 狀態獲取值) ---
+            downloadVariablesBtn.addEventListener('click', () => {
+                const variables = {};
+
+                // 顏色設定 (從文本輸入框獲取值，因為它們是真實顯示的值)
+                variables['--main-title-color'] = document.getElementById('mainTitleColorValue').value;
+                variables['--tile-title-color'] = document.getElementById('tileTitleColorValue').value;
+                variables['--background-color'] = document.getElementById('backgroundColorValue').value;
+                variables['--container-bg-color'] = document.getElementById('containerBgColorValue').value;
+                variables['--item-bg-color'] = document.getElementById('itemBgColorValue').value;
+                variables['--text-color'] = document.getElementById('textColorValue').value;
+                variables['--secondary-text-color'] = document.getElementById('secondaryTextColorValue').value;
+                variables['--border-color'] = document.getElementById('borderColorValue').value;
+                variables['--hover-shadow'] = document.getElementById('hoverShadow').value;
+                variables['--lightbox-bg-color'] = document.getElementById('lightboxBgColor').value;
+                variables['--lightbox-caption-bg-color'] = document.getElementById('lightboxCaptionBgColor').value;
+                variables['--lightbox-text-color'] = document.getElementById('lightboxTextColorValue').value;
+                variables['--close-button-color'] = document.getElementById('closeButtonColorValue').value;
+
+                // 字體大小設定
+                variables['--body-font-size'] = `${document.getElementById('bodyFontSize').value}px`;
+                variables['--main-title-font-size'] = `${document.getElementById('mainTitleFontSize').value}em`;
+                variables['--tile-title-font-size'] = `${document.getElementById('tileTitleFontSize').value}em`;
+                variables['--description-font-size'] = `${document.getElementById('descriptionFontSize').value}em`;
+                variables['--lightbox-title-font-size'] = `${document.getElementById('lightboxTitleFontSize').value}em`;
+                variables['--lightbox-description-font-size'] = `${document.getElementById('lightboxDescriptionFontSize').value}em`;
+                variables['--close-button-font-size'] = `${document.getElementById('closeButtonFontSize').value}px`;
+
+                // 背景圖片設定
+                let backgroundImageValue = document.getElementById('bodyBackgroundImage').value.trim();
+                // 下載時也要處理 URL 格式
+                if (backgroundImageValue !== 'none' && backgroundImageValue !== '' && !backgroundImageValue.startsWith('url(') && !backgroundImageValue.endsWith(')')) {
+                    backgroundImageValue = `url('${backgroundImageValue}')`;
+                } else if (backgroundImageValue.match(/^url\(['"]?\s*\)$/)) { // 檢查是否是空的 url()
+                    backgroundImageValue = 'none'; // 如果是空 URL，則寫入 none
+                }
+                variables['--body-background-image'] = backgroundImageValue || 'none';
+                
+                const backgroundSizeSelect = document.getElementById('bodyBackgroundSize');
+                // 下載時，如果選擇了 custom，則取 custom 的值，否則取 select 的值
+                if (backgroundSizeSelect.value === 'custom') {
+                    variables['--body-background-size'] = document.getElementById('bodyBackgroundSizeCustom').value || 'auto';
+                } else {
+                    variables['--body-background-size'] = backgroundSizeSelect.value;
+                }
+
+                const backgroundPositionSelect = document.getElementById('bodyBackgroundPosition');
+                // 下載時，如果選擇了 custom，則取 custom 的值，否則取 select 的值
+                if (backgroundPositionSelect.value === 'custom') {
+                    variables['--body-background-position'] = document.getElementById('bodyBackgroundPositionCustom').value || 'center center';
+                } else {
+                    variables['--body-background-position'] = backgroundPositionSelect.value;
+                }
+                
+                variables['--body-background-repeat'] = document.getElementById('bodyBackgroundRepeat').value;
+
+                // 組裝 CSS 內容
+                let cssContent = `/*
+ * 主題樣式變數設定 (由 CSS 變數生成器生成)
+ * --------------------------------------------------------------------------
+ */
+:root {
+`;
+
+                for (const [key, value] of Object.entries(variables)) {
+                    let comment = '';
+                    if (key.includes('color')) {
+                        comment = ` /* ${key.replace('--', '').replace(/([A-Z])/g, ' $1').trim()} */`;
+                    } else if (key.includes('font-size')) {
+                        comment = ` /* ${key.replace('--', '').replace(/([A-Z])/g, ' $1').trim()} */`;
+                    } else if (key.includes('background-image')) {
+                        comment = ` /* 頁面背景圖片 */`;
+                    } else if (key.includes('background-size')) {
+                        comment = ` /* 背景圖片尺寸 */`;
+                    } else if (key.includes('background-position')) {
+                        comment = ` /* 背景圖片位置 */`;
+                    } else if (key.includes('background-repeat')) {
+                        comment = ` /* 背景圖片重複方式 */`;
+                    }
+                    
+                    cssContent += `    ${key}: ${value};${comment}\n`;
+                }
+
+                cssContent += `}
+/* -------------------------------------------------------------------------- */
+`;
+
+                // 下載檔案
+                const blob = new Blob([cssContent], { type: 'text/css' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'variables.css';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+</body>
+</html>
