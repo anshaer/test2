@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">載入中...</title> <link rel="stylesheet" href="variables.css">
+    <style>
+        /* style.css START */
+
+        /*
+         * ：:root {} 中的變數定義已移至 variables.css 檔案。
+         * 在這裡只包含實際的 CSS 規則。
+         */
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size); /* 應用基礎文字大小 */
+            background-image: var(--body-background-image);
+            background-size: var(--body-background-size);
+            background-position: var(--body-background-position);
+            background-repeat: var(--body-background-repeat);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--main-title-color); /* 使用新變數 for "我的圖片藝廊" */
+            padding: 20px 0;
+            margin-bottom: 0;
+            background-color: var(--container-bg-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            font-size: var(--main-title-font-size); /* 應用主標題字體大小 */
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: var(--container-bg-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .gallery-item {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background-color: var(--item-bg-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 16px var(--hover-shadow);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            max-width: 100%;
+            height: auto;
+            flex-shrink: 0;
+            border-top-left-radius: 9px;
+            border-top-right-radius: 9px;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            padding-bottom: 75%;
+            position: relative;
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        .image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        .image-info {
+            padding: 15px;
+            background-color: var(--item-bg-color);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .image-info h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--tile-title-color); /* 使用新變數 for 浮磚標題 */
+            font-size: var(--tile-title-font-size); /* 應用浮磚標題字體大小 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .image-info p {
+            font-size: var(--description-font-size); /* 應用圖片描述字體大小 */
+            line-height: 1.4;
+            color: var(--secondary-text-color);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0;
+        }
+
+        /* Lightbox styles (浮動放大圖片視窗) */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--lightbox-bg-color);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            object-position: center;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-caption {
+            margin: 20px auto;
+            display: block;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            color: var(--lightbox-text-color);
+            padding: 15px 20px;
+            background-color: var(--lightbox-caption-bg-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .lightbox-caption h3 {
+            color: var(--close-button-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: var(--lightbox-title-font-size); /* 應用浮動視窗標題字體大小 */
+        }
+
+        .lightbox-caption p {
+            font-size: var(--lightbox-description-font-size); /* 應用浮動視窗描述字體大小 */
+            line-height: 1.5;
+            color: var(--lightbox-text-color);
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        .close-button {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: var(--close-button-color);
+            font-size: var(--close-button-font-size); /* 應用關閉按鈕字體大小 */
+            font-weight: lighter;
+            transition: 0.3s ease;
+            cursor: pointer;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #aaa;
+            text-decoration: none;
+        }
+
+        /* 手機版適應 (Optional: 如果需要更精細的控制) */
+        @media (max-width: 768px) {
+            .gallery-container {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 15px;
+            }
+            h1 {
+                font-size: calc(var(--main-title-font-size) * 0.7); /* 在小螢幕上略微縮小 */
+            }
+            .gallery-item img {
+                height: auto;
+            }
+            .image-info {
+                padding: 10px;
+            }
+            .image-info h3 {
+                font-size: calc(var(--tile-title-font-size) * 0.85); /* 在小螢幕上略微縮小 */
+            }
+            .image-info p {
+                font-size: calc(var(--description-font-size) * 0.9); /* 在小螢幕上略微縮小 */
+            }
+            .lightbox-content {
+                max-width: 95%;
+                max-height: 80vh;
+            }
+            .lightbox-caption {
+                width: 95%;
+                padding: 10px;
+            }
+            .close-button {
+                font-size: calc(var(--close-button-font-size) * 0.8); /* 在小螢幕上略微縮小 */
+                top: 10px;
+                right: 15px;
+            }
+        }
+        /* style.css END */
+    </style>
+</head>
+<body>
+    <h1 id="main-title">載入中...</h1> <div id="gallery-container" class="gallery-container">
+    </div>
+
+    <div id="lightbox" class="lightbox">
+        <span class="close-button">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" src="" alt="">
+        <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+
+    <script>
+        /* script.js START */
+        document.addEventListener('DOMContentLoaded', () => {
+            const pageTitle = document.getElementById('page-title');
+            const mainTitle = document.getElementById('main-title');
+            const galleryContainer = document.getElementById('gallery-container');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+            const closeButton = document.querySelector('.close-button');
+
+            // --- 禁止右鍵功能 START ---
+            // 移除以下兩行代碼 (或將其註解掉)，即可取消禁止右鍵功能
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            // --- 禁止右鍵功能 END ---
+
+            // 從 title.json 檔案載入標題資料
+            fetch('title.json')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.pageTitle) {
+                        pageTitle.textContent = data.pageTitle;
+                    }
+                    if (data.mainTitle) {
+                        mainTitle.textContent = data.mainTitle;
+                    }
+                })
+                .catch(error => console.error('Error loading the title data:', error));
+
+            // 以下為原本圖片展示相關的 Lightbox 功能，若無需使用，可移除
+            // 點擊關閉按鈕關閉 lightbox
+            closeButton.addEventListener('click', () => {
+                lightbox.style.display = 'none';
+            });
+
+            // 點擊 lightbox 外部區域關閉 lightbox
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                }
+            });
+        });
+        /* script.js END */
+    </script>
+</body>
+</html>
