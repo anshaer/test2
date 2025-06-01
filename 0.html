@@ -19,7 +19,7 @@
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            font-size: var(--body-font-size); /* 應用基礎文字大小 */
+            font-size: var(--body-font-size);
             background-image: var(--body-background-image);
             background-size: var(--body-background-size);
             background-position: var(--body-background-position);
@@ -28,12 +28,12 @@
 
         h1 {
             text-align: center;
-            color: var(--main-title-color); /* 使用新變數 for "我的圖片藝廊" */
+            color: var(--main-title-color);
             padding: 20px 0;
             margin-bottom: 0;
             background-color: var(--container-bg-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            font-size: var(--main-title-font-size); /* 應用主標題字體大小 */
+            font-size: var(--main-title-font-size);
         }
 
         .gallery-container {
@@ -57,6 +57,7 @@
             background-color: var(--item-bg-color);
             display: flex;
             flex-direction: column;
+            position: relative; /* 重要：用於定位內部下載按鈕 */
         }
 
         .gallery-item:hover {
@@ -76,8 +77,8 @@
 
         .image-wrapper {
             width: 100%;
-            padding-bottom: 75%;
-            position: relative;
+            padding-bottom: 75%; /* 保持圖片比例 */
+            position: relative; /* 重要：用於定位內部下載按鈕 */
             overflow: hidden;
             background-color: #eee;
         }
@@ -104,15 +105,15 @@
         .image-info h3 {
             margin-top: 0;
             margin-bottom: 8px;
-            color: var(--tile-title-color); /* 使用新變數 for 浮磚標題 */
-            font-size: var(--tile-title-font-size); /* 應用浮磚標題字體大小 */
+            color: var(--tile-title-color);
+            font-size: var(--tile-title-font-size);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .image-info p {
-            font-size: var(--description-font-size); /* 應用圖片描述字體大小 */
+            font-size: var(--description-font-size);
             line-height: 1.4;
             color: var(--secondary-text-color);
             display: -webkit-box;
@@ -167,11 +168,11 @@
             color: var(--close-button-color);
             margin-top: 0;
             margin-bottom: 10px;
-            font-size: var(--lightbox-title-font-size); /* 應用浮動視窗標題字體大小 */
+            font-size: var(--lightbox-title-font-size);
         }
 
         .lightbox-caption p {
-            font-size: var(--lightbox-description-font-size); /* 應用浮動視窗描述字體大小 */
+            font-size: var(--lightbox-description-font-size);
             line-height: 1.5;
             color: var(--lightbox-text-color);
             white-space: normal;
@@ -184,11 +185,12 @@
             top: 20px;
             right: 30px;
             color: var(--close-button-color);
-            font-size: var(--close-button-font-size); /* 應用關閉按鈕字體大小 */
+            font-size: var(--close-button-font-size);
             font-weight: lighter;
             transition: 0.3s ease;
             cursor: pointer;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+            z-index: 1002; /* 確保關閉按鈕在最上層 */
         }
 
         .close-button:hover,
@@ -197,7 +199,58 @@
             text-decoration: none;
         }
 
-        /* 手機版適應 (Optional: 如果需要更精細的控制) */
+        /* --- 新增/修改下載按鈕樣式 START --- */
+        /* 圖片磚上的下載按鈕 */
+        .tile-download-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 5; /* 確保在圖片上方 */
+            background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+            color: white;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 1.2em; /* 字體大小適中 */
+            text-decoration: none;
+            line-height: 1; /* 調整行高讓符號置中 */
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            display: flex; /* 使用 flexbox 幫助符號置中 */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile-download-button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* 浮磚 (Lightbox) 上的下載按鈕 */
+        .lightbox-download-button {
+            position: fixed; /* 固定在視窗中 */
+            top: 60px; /* 在關閉按鈕 (top: 20px) 下方，留出空間 */
+            right: 30px;
+            z-index: 1001; /* 比關閉按鈕低一層，但比內容高 */
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 50%; /* 圓形按鈕 */
+            font-size: 1.5em; /* 較大的字體大小 */
+            text-decoration: none;
+            line-height: 1;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            display: none; /* 預設隱藏，由 JS 控制顯示 */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-download-button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        /* --- 新增/修改下載按鈕樣式 END --- */
+
+
+        /* 手機版適應 */
         @media (max-width: 768px) {
             .gallery-container {
                 grid-template-columns: 1fr;
@@ -205,7 +258,7 @@
                 gap: 15px;
             }
             h1 {
-                font-size: calc(var(--main-title-font-size) * 0.7); /* 在小螢幕上略微縮小 */
+                font-size: calc(var(--main-title-font-size) * 0.7);
             }
             .gallery-item img {
                 height: auto;
@@ -214,10 +267,23 @@
                 padding: 10px;
             }
             .image-info h3 {
-                font-size: calc(var(--tile-title-font-size) * 0.85); /* 在小螢幕上略微縮小 */
+                font-size: calc(var(--tile-title-font-size) * 0.85);
             }
             .image-info p {
-                font-size: calc(var(--description-font-size) * 0.9); /* 在小螢幕上略微縮小 */
+                font-size: calc(var(--description-font-size) * 0.9);
+            }
+            /* 手機版下載按鈕調整 */
+            .tile-download-button {
+                font-size: 1em;
+                padding: 4px 6px;
+                top: 8px;
+                right: 8px;
+            }
+            .lightbox-download-button {
+                font-size: 1.2em;
+                padding: 8px 10px;
+                top: 50px; /* 針對小螢幕調整位置 */
+                right: 15px;
             }
             .lightbox-content {
                 max-width: 95%;
@@ -228,9 +294,10 @@
                 padding: 10px;
             }
             .close-button {
-                font-size: calc(var(--close-button-font-size) * 0.8); /* 在小螢幕上略微縮小 */
+                font-size: calc(var(--close-button-font-size) * 0.8);
                 top: 10px;
                 right: 15px;
+                z-index: 1002; /* 確保在最上層 */
             }
         }
         /* style.css END */
@@ -243,8 +310,12 @@
 
     <div id="lightbox" class="lightbox">
         <span class="close-button">&times;</span>
+        <a id="lightbox-download-button" href="#" download class="lightbox-download-button">📄</a>
         <img class="lightbox-content" id="lightbox-img" src="" alt="">
-        <div id="lightbox-caption" class="lightbox-caption"></div>
+        <div id="lightbox-caption" class="lightbox-caption">
+            <h3 id="lightbox-title"></h3>
+            <p id="lightbox-description"></p>
+            </div>
     </div>
 
     <script>
@@ -255,7 +326,9 @@
             const galleryContainer = document.getElementById('gallery-container');
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            const lightboxCaption = document.getElementById('lightbox-caption');
+            const lightboxTitle = document.getElementById('lightbox-title');
+            const lightboxDescription = document.getElementById('lightbox-description');
+            const lightboxDownloadButton = document.getElementById('lightbox-download-button');
             const closeButton = document.querySelector('.close-button');
 
             // --- 禁止右鍵功能 START ---
@@ -292,7 +365,17 @@
                         img.src = image.path;
                         img.alt = image.title;
 
+                        // --- 圖片磚下載按鈕 START ---
+                        const tileDownloadBtn = document.createElement('a');
+                        tileDownloadBtn.href = image.path;
+                        const filename = image.path.substring(image.path.lastIndexOf('/') + 1);
+                        tileDownloadBtn.download = filename;
+                        tileDownloadBtn.classList.add('tile-download-button'); // 使用新的 class
+                        tileDownloadBtn.textContent = '📄'; // 使用「📄」符號
+                        // --- 圖片磚下載按鈕 END ---
+
                         imageWrapper.appendChild(img);
+                        imageWrapper.appendChild(tileDownloadBtn); // 將下載按鈕添加到圖片包裹器中
 
                         const infoDiv = document.createElement('div');
                         infoDiv.classList.add('image-info');
@@ -313,7 +396,15 @@
                             lightbox.style.display = 'block';
                             lightboxImg.src = image.path;
                             lightboxImg.alt = image.title;
-                            lightboxCaption.innerHTML = `<h3>${image.title}</h3><p>${image.description}</p>`;
+                            
+                            lightboxTitle.textContent = image.title;
+                            lightboxDescription.textContent = image.description;
+
+                            // --- 更新 lightbox 下載按鈕 START ---
+                            lightboxDownloadButton.href = image.path;
+                            lightboxDownloadButton.download = filename;
+                            lightboxDownloadButton.style.display = 'flex'; // 顯示下載按鈕
+                            // --- 更新 lightbox 下載按鈕 END ---
                         });
 
                         galleryContainer.appendChild(galleryItem);
@@ -321,15 +412,19 @@
                 })
                 .catch(error => console.error('Error loading the images:', error));
 
-            // 點擊關閉按鈕關閉 lightbox
-            closeButton.addEventListener('click', () => {
+            // 關閉 lightbox 的通用函數
+            function closeLightbox() {
                 lightbox.style.display = 'none';
-            });
+                lightboxDownloadButton.style.display = 'none'; // 隱藏下載按鈕
+            }
+
+            // 點擊關閉按鈕關閉 lightbox
+            closeButton.addEventListener('click', closeLightbox);
 
             // 點擊 lightbox 外部區域關閉 lightbox
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) {
-                    lightbox.style.display = 'none';
+                    closeLightbox();
                 }
             });
         });
