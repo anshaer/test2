@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">載入中...</title> <link rel="stylesheet" href="variables.css">
+    <title id="page-title">載入中...</title>
+    <link rel="stylesheet" href="variables.css">
     <style>
         /* style.css START */
 
@@ -236,7 +237,8 @@
     </style>
 </head>
 <body>
-    <h1 id="main-title">載入中...</h1> <div id="gallery-container" class="gallery-container">
+    <h1 id="main-title">載入中...</h1>
+    <div id="gallery-container" class="gallery-container">
     </div>
 
     <div id="lightbox" class="lightbox">
@@ -257,13 +259,12 @@
             const closeButton = document.querySelector('.close-button');
 
             // --- 禁止右鍵功能 START ---
-            // 移除以下兩行代碼 (或將其註解掉)，即可取消禁止右鍵功能
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
             });
             // --- 禁止右鍵功能 END ---
 
-            // 從 title.json 檔案載入標題資料
+            // 載入 title.json
             fetch('title.json')
                 .then(response => response.json())
                 .then(data => {
@@ -276,7 +277,50 @@
                 })
                 .catch(error => console.error('Error loading the title data:', error));
 
-            // 以下為原本圖片展示相關的 Lightbox 功能，若無需使用，可移除
+            // 載入 images.json 並建構圖片藝廊
+            fetch('images.json')
+                .then(response => response.json())
+                .then(images => {
+                    images.forEach(image => {
+                        const galleryItem = document.createElement('div');
+                        galleryItem.classList.add('gallery-item');
+
+                        const imageWrapper = document.createElement('div');
+                        imageWrapper.classList.add('image-wrapper');
+
+                        const img = document.createElement('img');
+                        img.src = image.path;
+                        img.alt = image.title;
+
+                        imageWrapper.appendChild(img);
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.classList.add('image-info');
+
+                        const titleH3 = document.createElement('h3');
+                        titleH3.textContent = image.title;
+
+                        const descriptionP = document.createElement('p');
+                        descriptionP.textContent = image.description;
+
+                        infoDiv.appendChild(titleH3);
+                        infoDiv.appendChild(descriptionP);
+
+                        galleryItem.appendChild(imageWrapper);
+                        galleryItem.appendChild(infoDiv);
+
+                        galleryItem.addEventListener('click', () => {
+                            lightbox.style.display = 'block';
+                            lightboxImg.src = image.path;
+                            lightboxImg.alt = image.title;
+                            lightboxCaption.innerHTML = `<h3>${image.title}</h3><p>${image.description}</p>`;
+                        });
+
+                        galleryContainer.appendChild(galleryItem);
+                    });
+                })
+                .catch(error => console.error('Error loading the images:', error));
+
             // 點擊關閉按鈕關閉 lightbox
             closeButton.addEventListener('click', () => {
                 lightbox.style.display = 'none';
