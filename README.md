@@ -33,3 +33,5 @@ images資料夾
 將None切換為main   
 靜等3-15分鐘  
 重新整理會出現
+Your site is live at 藍色網站（就是你的頁面）
+
