@@ -7,12 +7,9 @@
     <link rel="stylesheet" href="variables.css">
     <style>
         /* style.css START */
-
         /*
-         * ：:root {} 中的變數定義已移至 variables.css 檔案。
-         * 在這裡只包含實際的 CSS 規則。
+         * ：:root {} 變數定義已移至 variables.css
          */
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -25,7 +22,6 @@
             background-position: var(--body-background-position);
             background-repeat: var(--body-background-repeat);
         }
-
         h1 {
             text-align: center;
             color: var(--main-title-color);
@@ -35,7 +31,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             font-size: var(--main-title-font-size);
         }
-
         .gallery-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -47,7 +42,6 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
-
         .gallery-item {
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -57,14 +51,11 @@
             background-color: var(--item-bg-color);
             display: flex;
             flex-direction: column;
-            /* position: relative; 不再需要，因為圖片磚下載按鈕已移除 */
         }
-
         .gallery-item:hover {
             transform: translateY(-8px);
             box-shadow: 0 8px 16px var(--hover-shadow);
         }
-
         .gallery-item img {
             width: 100%;
             display: block;
@@ -74,7 +65,6 @@
             border-top-left-radius: 9px;
             border-top-right-radius: 9px;
         }
-
         .image-wrapper {
             width: 100%;
             padding-bottom: 75%;
@@ -82,7 +72,6 @@
             overflow: hidden;
             background-color: #eee;
         }
-
         .image-wrapper img {
             position: absolute;
             top: 0;
@@ -92,7 +81,6 @@
             object-fit: contain;
             object-position: center;
         }
-
         .image-info {
             padding: 15px;
             background-color: var(--item-bg-color);
@@ -101,7 +89,6 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .image-info h3 {
             margin-top: 0;
             margin-bottom: 8px;
@@ -111,7 +98,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .image-info p {
             font-size: var(--description-font-size);
             line-height: 1.4;
@@ -123,8 +109,6 @@
             text-overflow: ellipsis;
             margin-bottom: 0;
         }
-
-        /* Lightbox styles (浮動放大圖片視窗) */
         .lightbox {
             display: none;
             position: fixed;
@@ -139,7 +123,6 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
-
         .lightbox-content {
             margin: auto;
             display: block;
@@ -150,7 +133,6 @@
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
         }
-
         .lightbox-caption {
             margin: 20px auto;
             display: block;
@@ -163,17 +145,14 @@
             border-radius: 8px;
             box-sizing: border-box;
         }
-
         .lightbox-caption h3 {
             color: var(--close-button-color);
             margin-top: 0;
             margin-bottom: 10px;
             font-size: var(--lightbox-title-font-size);
-            /* 重要：使 H3 成為行內塊元素以與按鈕對齊 */
             display: inline-block;
-            vertical-align: middle; /* 垂直對齊按鈕 */
+            vertical-align: middle;
         }
-
         .lightbox-caption p {
             font-size: var(--lightbox-description-font-size);
             line-height: 1.5;
@@ -182,7 +161,6 @@
             overflow: visible;
             text-overflow: clip;
         }
-
         .close-button {
             position: fixed;
             top: 20px;
@@ -193,44 +171,35 @@
             transition: 0.3s ease;
             cursor: pointer;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-            z-index: 1001; /* 確保關閉按鈕在最上層 */
+            z-index: 1001; 
         }
-
         .close-button:hover,
         .close-button:focus {
             color: #aaa;
             text-decoration: none;
         }
-
-        /* --- 修改下載按鈕樣式 START --- */
-        /* 圖片磚下載按鈕樣式已移除 */
-
-        /* 浮磚 (Lightbox) 上的下載按鈕 */
         .lightbox-download-button {
-            /* 不再是 fixed 定位 */
-            display: inline-flex; /* 確保與文字對齊並提供 flex 居中能力 */
+            display: inline-flex; 
             align-items: center;
             justify-content: center;
-            vertical-align: middle; /* 與周圍文字垂直對齊 */
-            margin-right: 8px; /* 與標題文字的間距 */
-            background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+            vertical-align: middle; 
+            margin-right: 8px; 
+            background-color: rgba(0, 0, 0, 0.5); 
             color: white;
-            padding: 4px 7px; /* 更小的內邊距 */
-            border-radius: 4px; /* 圓角 */
-            font-size: 1em; /* 字體大小適中 */
+            padding: 4px 7px; 
+            border-radius: 4px; 
+            font-size: 1em; 
             text-decoration: none;
-            line-height: 1; /* 調整行高讓符號置中 */
+            line-height: 1; 
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
-
         .lightbox-download-button:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
-        /* --- 修改下載按鈕樣式 END --- */
 
 
-        /* 手機版適應 */
+        
         @media (max-width: 768px) {
             .gallery-container {
                 grid-template-columns: 1fr;
@@ -252,7 +221,6 @@
             .image-info p {
                 font-size: calc(var(--description-font-size) * 0.9);
             }
-            /* 手機版浮磚下載按鈕調整 */
             .lightbox-download-button {
                 font-size: 0.9em;
                 padding: 3px 6px;
@@ -283,7 +251,6 @@
     <h1 id="main-title">載入中...</h1>
     <div id="gallery-container" class="gallery-container">
     </div>
-
     <div id="lightbox" class="lightbox">
         <span class="close-button">&times;</span>
         <img class="lightbox-content" id="lightbox-img" src="" alt="">
@@ -326,7 +293,7 @@
                 })
                 .catch(error => console.error('Error loading the title data:', error));
 
-            // 載入 images.json 並建構圖片藝廊
+            
             fetch('images.json')
                 .then(response => response.json())
                 .then(images => {
@@ -341,10 +308,10 @@
                         img.src = image.path;
                         img.alt = image.title;
 
-                        // 圖片磚下載按鈕的生成程式碼已移除
+                       
 
                         imageWrapper.appendChild(img);
-                        // imageWrapper.appendChild(tileDownloadBtn); // 移除這行
+    
 
                         const infoDiv = document.createElement('div');
                         infoDiv.classList.add('image-info');
