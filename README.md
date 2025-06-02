@@ -26,5 +26,10 @@ title.json
 variables.css  
 images.json  
 images資料夾  
+  
 上傳到你的GitHub   
-在settings中
+在settings中切換到Pages控制頁面  
+在Branch中  
+將None切換為main   
+靜等3-15分鐘  
+重新整理會出現
