@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON 產生器</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #f9f9f9;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+      margin-top: 0.3em;
+    }
+    button {
+      margin-top: 2em;
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>產生 title.json</h1>
+  
+  <label for="pageTitle">頁面標題 (pageTitle)</label>
+  <input type="text" id="pageTitle" value="我的新網頁標題">
+
+  <label for="mainTitle">主標題 (mainTitle)</label>
+  <input type="text" id="mainTitle" value="歡迎來到我的網頁">
+
+  <button onclick="generateJSON()">產生 JSON 並下載</button>
+
+  <script>
+    function generateJSON() {
+      const pageTitle = document.getElementById('pageTitle').value;
+      const mainTitle = document.getElementById('mainTitle').value;
+
+      const jsonData = {
+        pageTitle: pageTitle,
+        mainTitle: mainTitle
+      };
+
+      const jsonStr = JSON.stringify(jsonData, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "title.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
