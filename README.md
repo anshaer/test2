@@ -34,4 +34,5 @@ images資料夾
 靜等3-15分鐘  
 重新整理會出現
 Your site is live at 藍色網站（就是你的頁面）
+ 點擊Visit site在新分頁開啟展示頁面
 
