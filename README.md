@@ -16,4 +16,15 @@ https://anshaer.github.io/test2/%E5%9C%96%E7%89%87%E5%B0%88%E6%A1%88%20JSON%20%E
 產生title.json  
 https://anshaer.github.io/test2/%E4%BF%AE%E6%94%B9%E9%A0%81%E7%B1%A4%E8%88%87%E6%A8%99%E9%A1%8C.html
 
+下載頁面主程式嗎  
+存成index.html  
+https://github.com/anshaer/test2/blob/b9aad1f75542c4d3cdd2722c3103a1c74d07c9f0/0.html
 
+將  
+index.html  
+title.json  
+variables.css  
+images.json  
+images資料夾  
+上傳到你的GitHub   
+在settings中
