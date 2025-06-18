@@ -127,6 +127,7 @@
     let displayedSongs = [];
     let currentIndex = 0;
     const batchSize = 10;
+    let isLoading = false;
 
     // 載入JSON數據（實際使用時取消註解）
     /*
@@ -143,6 +144,9 @@
 
     // 載入更多歌曲
     function loadMoreSongs() {
+      if (isLoading || displayedSongs.length === 0) return;
+      isLoading = true;
+
       const songList = document.getElementById('songList');
       const fragment = document.createDocumentFragment();
 
@@ -159,13 +163,15 @@
         fragment.appendChild(songItem);
       }
 
-      songList.appendChild(fragment);
+      requestAnimationFrame(() => {
+        songList.appendChild(fragment);
+        isLoading = false;
 
-      // 無限滾動：到達最後一首時從頭開始
-      if (currentIndex >= displayedSongs.length && displayedSongs.length > 0) {
-        currentIndex = 0;
-        loadMoreSongs();
-      }
+        // 無限滾動：到達末尾時重置索引，但不立即載入
+        if (currentIndex >= displayedSongs.length && displayedSongs.length > 0) {
+          currentIndex = 0;
+        }
+      });
     }
 
     // 過濾與排序
@@ -192,11 +198,7 @@
           valueA = valueA.toLowerCase();
           valueB = valueB.toLowerCase();
         }
-        if (order === 'asc') {
-          return valueA > valueB ? 1 : -1;
-        } else {
-          return valueA < valueB ? 1 : -1;
-        }
+        return order === 'asc' ? (valueA > valueB ? 1 : -1) : (valueA < valueB ? 1 : -1);
       });
 
       // 重置列表
@@ -205,12 +207,32 @@
       loadMoreSongs();
     }
 
+    // 節流函數
+    function throttle(func, limit) {
+      let lastFunc;
+      let lastRan;
+      return function (...args) {
+        if (!lastRan) {
+          func.apply(this, args);
+          lastRan = Date.now();
+        } else {
+          clearTimeout(lastFunc);
+          lastFunc = setTimeout(() => {
+            if ((Date.now() - lastRan) >= limit) {
+              func.apply(this, args);
+              lastRan = Date.now();
+            }
+          }, limit - (Date.now() - lastRan));
+        }
+      };
+    }
+
     // 無限滾動監聽
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', throttle(() => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
         loadMoreSongs();
       }
-    });
+    }, 200));
 
     // 搜尋、過濾、排序事件監聽
     document.getElementById('searchInput').addEventListener('input', filterAndSortSongs);
