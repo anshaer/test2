@@ -14,6 +14,41 @@
             color: #333;
         }
 
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #333;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        #add-song-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 2em;
+            display: flex;
+            justify-content.center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease;
+        }
+
+        #add-song-button:hover {
+            background-color: #0056b3;
+        }
+
         #search-bar {
             position: sticky;
             top: 0;
@@ -104,6 +139,107 @@
             display: none; /* Hidden by default */
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1002; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .modal-content input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between; /* To space out the buttons */
+            align-items: center;
+        }
+
+        .modal-buttons button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-left: 10px;
+        }
+
+        .modal-buttons .confirm-button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .modal-buttons .confirm-button:hover {
+            background-color: #218838;
+        }
+
+        .modal-buttons .cancel-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .modal-buttons .cancel-button:hover {
+            background-color: #c82333;
+        }
+
+        .modal-buttons .download-button {
+            background-color: #17a2b8;
+            color: white;
+            display: none; /* Hidden by default, shown after adding songs */
+        }
+
+        .modal-buttons .download-button:hover {
+            background-color: #138496;
+        }
+
         /* 手機和平板適應 */
         @media (max-width: 768px) {
             #song-list {
@@ -113,17 +249,37 @@
             #search-bar {
                 padding: 10px 15px;
             }
+            header {
+                padding: 10px 15px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            #add-song-button {
+                width: 35px;
+                height: 35px;
+                font-size: 1.8em;
+            }
+            .modal-content {
+                width: 90%;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <header>
+        <h1>我的歌單</h1>
+        <button id="add-song-button">+</button>
+    </header>
 
     <div id="search-bar">
         <input type="text" id="search-input" placeholder="搜尋編號、語言、歌名、演唱者...">
     </div>
 
     <div id="song-list">
-        </div>
+    </div>
 
     <div id="loading-indicator">
         載入中...
@@ -133,12 +289,50 @@
         已複製！
     </div>
 
+    <div id="addSongModal" class="modal">
+        <div class="modal-content">
+            <h2>新增歌曲</h2>
+            <label for="new-song-id">編號:</label>
+            <input type="text" id="new-song-id" placeholder="例如: K001">
+
+            <label for="new-song-language">語言:</label>
+            <input type="text" id="new-song-language" placeholder="例如: 國語">
+
+            <label for="new-song-title">歌名:</label>
+            <input type="text" id="new-song-title" placeholder="例如: 稻香">
+
+            <label for="new-song-artist">演唱者:</label>
+            <input type="text" id="new-song-artist" placeholder="例如: 周杰倫">
+
+            <div class="modal-buttons">
+                <button id="download-json-button" class="download-button">下載最新歌單</button>
+                <div>
+                    <button id="confirm-add-button" class="confirm-button">確認新增</button>
+                    <button id="cancel-add-button" class="cancel-button">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // JavaScript 程式碼
         const songListElement = document.getElementById('song-list');
         const searchInput = document.getElementById('search-input');
         const loadingIndicator = document.getElementById('loading-indicator');
         const copyFeedback = document.getElementById('copy-feedback');
+
+        // Modal elements
+        const addSongButton = document.getElementById('add-song-button');
+        const addSongModal = document.getElementById('addSongModal');
+        const confirmAddButton = document.getElementById('confirm-add-button');
+        const cancelAddButton = document.getElementById('cancel-add-button');
+        const downloadJsonButton = document.getElementById('download-json-button');
+
+        const newSongIdInput = document.getElementById('new-song-id');
+        const newSongLanguageInput = document.getElementById('new-song-language');
+        const newSongTitleInput = document.getElementById('new-song-title');
+        const newSongArtistInput = document.getElementById('new-song-artist');
+
 
         let allSongs = []; // 儲存所有歌曲資料
         let filteredSongs = []; // 儲存搜尋結果
@@ -262,6 +456,75 @@
             }
             displaySongs(); // 顯示搜尋結果或所有歌曲
         }
+
+        // --- Modal Functionality ---
+
+        // Open modal
+        addSongButton.addEventListener('click', () => {
+            addSongModal.style.display = 'flex'; // Use flex to center the modal content
+            // Reset input fields
+            newSongIdInput.value = '';
+            newSongLanguageInput.value = '';
+            newSongTitleInput.value = '';
+            newSongArtistInput.value = '';
+            downloadJsonButton.style.display = 'none'; // Hide download button initially
+        });
+
+        // Close modal
+        cancelAddButton.addEventListener('click', () => {
+            addSongModal.style.display = 'none';
+        });
+
+        // Add new song
+        confirmAddButton.addEventListener('click', () => {
+            const id = newSongIdInput.value.trim();
+            const language = newSongLanguageInput.value.trim();
+            const title = newSongTitleInput.value.trim();
+            const artist = newSongArtistInput.value.trim();
+
+            if (!id || !language || !title || !artist) {
+                alert('所有欄位都必須填寫！');
+                return;
+            }
+
+            const newSong = {
+                id: id,
+                language: language,
+                title: title,
+                artist: artist
+            };
+
+            allSongs.push(newSong); // Add to the main song list
+            filteredSongs = [...allSongs]; // Update filtered list to reflect new song (or re-filter if search is active)
+
+            // Clear current display and re-render
+            songListElement.innerHTML = '';
+            currentStartIndex = 0;
+            displaySongs(); // Re-display all songs including the new one
+
+            alert('歌曲新增成功！');
+            addSongModal.style.display = 'none'; // Close modal after adding
+            downloadJsonButton.style.display = 'block'; // Show download button
+        });
+
+        // Download updated JSON
+        downloadJsonButton.addEventListener('click', () => {
+            const jsonString = JSON.stringify(allSongs, null, 2); // Pretty print JSON
+
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'songs.json'; // Set the download filename
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the URL object
+
+            alert('songs.json 已下載！');
+        });
+
 
         // 事件監聽器
         document.addEventListener('DOMContentLoaded', loadSongs); // 網頁載入完成時載入歌曲
