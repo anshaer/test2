@@ -1,272 +1,224 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的歌單</title>
-    <style>
-        /* CSS 樣式 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>歌單網頁</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
 
-        #search-bar {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background-color: #fff;
-            padding: 15px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            box-sizing: border-box; /* 確保內邊距不增加寬度 */
-        }
+    body {
+      background-color: #f4f4f4;
+    }
 
-        #search-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box; /* 確保內邊距不增加寬度 */
-        }
+    .search-container {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      padding: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-        #song-list {
-            padding: 20px;
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 響應式網格佈局 */
-        }
+    #searchInput, #languageFilter, #sortSelect {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-        .song-item {
-            background-color: #fff;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-            cursor: pointer; /* Add cursor to indicate it's clickable */
-        }
+    #searchInput {
+      flex: 1;
+      min-width: 200px;
+    }
 
-        .song-item:hover {
-            transform: translateY(-3px);
-        }
+    #languageFilter, #sortSelect {
+      width: 150px;
+    }
 
-        .song-id {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 5px;
-        }
+    .song-list {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .song-language {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 5px;
-        }
+    .song-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr 3fr 2fr;
+      padding: 15px;
+      background-color: #fff;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        .song-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
+    .song-item div {
+      padding: 0 10px;
+    }
 
-        .song-artist {
-            color: #666;
-            font-size: 0.9em;
-        }
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .song-item {
+        grid-template-columns: 1fr 1fr 2fr 2fr;
+        font-size: 14px;
+      }
+      #languageFilter, #sortSelect {
+        width: 120px;
+      }
+    }
 
-        #loading-indicator {
-            text-align: center;
-            padding: 20px;
-            font-size: 1.1em;
-            color: #888;
-            display: none; /* 預設隱藏 */
-        }
-
-        #copy-feedback {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1001;
-            display: none; /* Hidden by default */
-        }
-
-        /* 手機和平板適應 */
-        @media (max-width: 768px) {
-            #song-list {
-                grid-template-columns: 1fr; /* 單欄佈局 */
-                padding: 15px;
-            }
-            #search-bar {
-                padding: 10px 15px;
-            }
-        }
-    </style>
+    @media (max-width: 480px) {
+      .song-item {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 5px;
+      }
+      .song-item div:nth-child(3), .song-item div:nth-child(4) {
+        grid-column: span 2;
+      }
+      .search-container {
+        flex-direction: column;
+      }
+      #searchInput, #languageFilter, #sortSelect {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="輸入編號、語言、歌名或演唱者">
+    <select id="languageFilter">
+      <option value="">所有語言</option>
+      <option value="中">中文</option>
+      <option value="英">英文</option>
+      <option value="日">日文</option>
+      <option value="粵">粵語</option>
+    </select>
+    <select id="sortSelect">
+      <option value="id-asc">編號（升序）</option>
+      <option value="id-desc">編號（降序）</option>
+      <option value="title-asc">歌名（升序）</option>
+      <option value="title-desc">歌名（降序）</option>
+      <option value="artist-asc">演唱者（升序）</option>
+      <option value="artist-desc">演唱者（降序）</option>
+    </select>
+  </div>
+  <div class="song-list" id="songList"></div>
 
-    <div id="search-bar">
-        <input type="text" id="search-input" placeholder="搜尋編號、語言、歌名、演唱者...">
-    </div>
+  <script>
+    // 模擬JSON數據（實際使用時應從外部songs.json載入）
+    const songsData = [
+      { id: 1, language: "中", title: "月亮代表我的心", artist: "鄧麗君" },
+      { id: 2, language: "英", title: "Yesterday", artist: "The Beatles" },
+      { id: 3, language: "日", title: "Lemon", artist: "米津玄師" },
+      { id: 4, language: "粵", title: "月半小夜曲", artist: "李克勤" }
+    ];
 
-    <div id="song-list">
-        </div>
+    let songs = songsData;
+    let displayedSongs = [];
+    let currentIndex = 0;
+    const batchSize = 10;
 
-    <div id="loading-indicator">
-        載入中...
-    </div>
+    // 載入JSON數據（實際使用時取消註解）
+    /*
+    async function loadSongs() {
+      try {
+        const response = await fetch('songs.json');
+        songs = await response.json();
+        filterAndSortSongs();
+      } catch (error) {
+        console.error('載入歌曲失敗:', error);
+      }
+    }
+    */
 
-    <div id="copy-feedback">
-        已複製！
-    </div>
+    // 載入更多歌曲
+    function loadMoreSongs() {
+      const songList = document.getElementById('songList');
+      const fragment = document.createDocumentFragment();
 
-    <script>
-        // JavaScript 程式碼
-        const songListElement = document.getElementById('song-list');
-        const searchInput = document.getElementById('search-input');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const copyFeedback = document.getElementById('copy-feedback');
+      for (let i = 0; i < batchSize && currentIndex < displayedSongs.length; i++, currentIndex++) {
+        const song = displayedSongs[currentIndex];
+        const songItem = document.createElement('div');
+        songItem.className = 'song-item';
+        songItem.innerHTML = `
+          <div>${song.id}</div>
+          <div>${song.language}</div>
+          <div>${song.title}</div>
+          <div>${song.artist}</div>
+        `;
+        fragment.appendChild(songItem);
+      }
 
-        let allSongs = []; // 儲存所有歌曲資料
-        let filteredSongs = []; // 儲存搜尋結果
-        let currentStartIndex = 0;
-        const songsPerLoad = 20; // 每次載入的歌曲數量
+      songList.appendChild(fragment);
 
-        // 載入 JSON 資料
-        async function loadSongs() {
-            try {
-                const response = await fetch('songs.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                allSongs = await response.json();
-                filteredSongs = [...allSongs]; // 預設顯示所有歌曲
-                displaySongs(); // 初始顯示部分歌曲
-            } catch (error) {
-                console.error("Error loading songs:", error);
-                songListElement.innerHTML = "<p>載入歌曲失敗，請檢查 songs.json 檔案是否存在。</p>";
-            }
+      // 無限滾動：到達最後一首時從頭開始
+      if (currentIndex >= displayedSongs.length && displayedSongs.length > 0) {
+        currentIndex = 0;
+        loadMoreSongs();
+      }
+    }
+
+    // 過濾與排序
+    function filterAndSortSongs() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const language = document.getElementById('languageFilter').value;
+      const sort = document.getElementById('sortSelect').value;
+
+      // 過濾
+      displayedSongs = songs.filter(song =>
+        (song.id.toString().includes(query) ||
+         song.language.toLowerCase().includes(query) ||
+         song.title.toLowerCase().includes(query) ||
+         song.artist.toLowerCase().includes(query)) &&
+        (language === '' || song.language === language)
+      );
+
+      // 排序
+      displayedSongs.sort((a, b) => {
+        const [field, order] = sort.split('-');
+        let valueA = a[field];
+        let valueB = b[field];
+        if (field !== 'id') {
+          valueA = valueA.toLowerCase();
+          valueB = valueB.toLowerCase();
         }
-
-        // 渲染歌曲到頁面
-        function renderSongs(songsToRender) {
-            songsToRender.forEach(song => {
-                const songItem = document.createElement('div');
-                songItem.className = 'song-item';
-                songItem.innerHTML = `
-                    <div class="song-id">編號: ${song.id} <span class="song-language">${song.language}</span></div>
-                    <div class="song-title">${song.title}</div>
-                    <div class="song-artist">演唱者: ${song.artist}</div>
-                `;
-                // Add click event listener to copy song info
-                songItem.addEventListener('click', () => {
-                    const textToCopy = `編號: ${song.id} 歌名: ${song.title}`;
-                    navigator.clipboard.writeText(textToCopy)
-                        .then(() => {
-                            showCopyFeedback();
-                        })
-                        .catch(err => {
-                            console.error('無法複製文字:', err);
-                            alert('複製失敗，請手動複製: ' + textToCopy);
-                        });
-                });
-                songListElement.appendChild(songItem);
-            });
+        if (order === 'asc') {
+          return valueA > valueB ? 1 : -1;
+        } else {
+          return valueA < valueB ? 1 : -1;
         }
+      });
 
-        // 顯示複製成功提示
-        function showCopyFeedback() {
-            copyFeedback.style.display = 'block';
-            setTimeout(() => {
-                copyFeedback.style.display = 'none';
-            }, 1500); // 1.5 秒後隱藏
-        }
+      // 重置列表
+      currentIndex = 0;
+      document.getElementById('songList').innerHTML = '';
+      loadMoreSongs();
+    }
 
-        // 顯示歌曲（用於無限滾動）
-        function displaySongs() {
-            const songsToLoad = filteredSongs.slice(currentStartIndex, currentStartIndex + songsPerLoad);
-            renderSongs(songsToLoad);
-            currentStartIndex += songsToLoad.length;
+    // 無限滾動監聽
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMoreSongs();
+      }
+    });
 
-            // If in search mode, no infinite scroll
-            if (searchInput.value.trim() !== '') {
-                loadingIndicator.style.display = 'none';
-                if (songsToLoad.length === 0 && filteredSongs.length === 0) {
-                   if(songListElement.innerHTML === '') {
-                      songListElement.innerHTML = '<p>沒有符合條件的歌曲。</p>';
-                   }
-                } else if (songsToLoad.length < songsPerLoad && filteredSongs.length > 0 && currentStartIndex >= filteredSongs.length) {
-                    // All filtered songs displayed
-                }
-            } else { // Regular Browse mode
-                if (songsToLoad.length === 0 && filteredSongs.length > 0 && currentStartIndex >= filteredSongs.length) {
-                    // All songs loaded, or scrolled to the end. Do nothing or reset
-                    loadingIndicator.style.display = 'none';
-                } else if (songsToLoad.length === 0 && filteredSongs.length === 0) {
-                    loadingIndicator.style.display = 'none';
-                    if(songListElement.innerHTML === '') {
-                       songListElement.innerHTML = '<p>沒有符合條件的歌曲。</p>';
-                    }
-                } else {
-                    loadingIndicator.style.display = 'none';
-                }
-            }
-        }
+    // 搜尋、過濾、排序事件監聽
+    document.getElementById('searchInput').addEventListener('input', filterAndSortSongs);
+    document.getElementById('languageFilter').addEventListener('change', filterAndSortSongs);
+    document.getElementById('sortSelect').addEventListener('change', filterAndSortSongs);
 
-        // 處理滾動事件
-        function handleScroll() {
-            // 只有在非搜尋模式下才觸發無限滾動
-            if (searchInput.value.trim() === '') {
-                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-                if (scrollTop + clientHeight >= scrollHeight - 50) { // 接近底部50px時觸發
-                    loadingIndicator.style.display = 'block'; // 顯示載入提示
-                    setTimeout(() => { // 模擬網路延遲
-                        displaySongs();
-                    }, 300);
-                }
-            }
-        }
-
-        // 搜尋功能
-        function searchSongs() {
-            const searchTerm = searchInput.value.trim().toLowerCase();
-            songListElement.innerHTML = ''; // 清空當前顯示的歌曲
-            currentStartIndex = 0; // 重置起始索引
-
-            if (searchTerm === '') {
-                filteredSongs = [...allSongs]; // 如果搜尋框為空，顯示所有歌曲
-                loadingIndicator.style.display = 'none'; // 隱藏載入提示
-                document.addEventListener('scroll', handleScroll); // 重新啟用滾動監聽
-            } else {
-                // 篩選歌曲
-                filteredSongs = allSongs.filter(song =>
-                    song.id.toString().includes(searchTerm) ||
-                    song.language.toLowerCase().includes(searchTerm) ||
-                    song.title.toLowerCase().includes(searchTerm) ||
-                    song.artist.toLowerCase().includes(searchTerm)
-                );
-                document.removeEventListener('scroll', handleScroll); // 搜尋時禁用滾動監聽
-            }
-            displaySongs(); // 顯示搜尋結果或所有歌曲
-        }
-
-        // 事件監聽器
-        document.addEventListener('DOMContentLoaded', loadSongs); // 網頁載入完成時載入歌曲
-        document.addEventListener('scroll', handleScroll); // 滾動事件
-        searchInput.addEventListener('input', searchSongs); // 搜尋輸入框事件
-    </script>
+    // 初始化
+    filterAndSortSongs();
+  </script>
 </body>
 </html>
