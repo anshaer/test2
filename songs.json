@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "language": "中",
+    "title": "晴天",
+    "artist": "周杰倫"
+  },
+  {
+    "id": 2,
+    "language": "英",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen"
+  },
+  {
+    "id": 3,
+    "language": "日",
+    "title": "紅蓮華",
+    "artist": "LiSA"
+  },
+  {
+    "id": 4,
+    "language": "粵",
+    "title": "海闊天空",
+    "artist": "Beyond"
+  },
+  {
+    "id": 5,
+    "language": "中",
+    "title": "修煉愛情",
+    "artist": "林俊傑"
+  },
+  {
+    "id": 6,
+    "language": "英",
+    "title": "Hotel California",
+    "artist": "Eagles"
+  },
+  {
+    "id": 7,
+    "language": "日",
+    "title": "Lemon",
+    "artist": "米津玄師"
+  },
+  {
+    "id": 8,
+    "language": "粵",
+    "title": "囍帖街",
+    "artist": "謝安琪"
+  },
+  {
+    "id": 9,
+    "language": "中",
+    "title": "後來",
+    "artist": "劉若英"
+  },
+  {
+    "id": 10,
+    "language": "英",
+    "title": "Don't Stop Me Now",
+    "artist": "Queen"
+  },
+  {
+    "id": 11,
+    "language": "日",
+    "title": "前前前世",
+    "artist": "RADWIMPS"
+  },
+  {
+    "id": 12,
+    "language": "粵",
+    "title": "K歌之王",
+    "artist": "陳奕迅"
+  },
+  {
+    "id": 13,
+    "language": "中",
+    "title": "小幸運",
+    "artist": "田馥甄"
+  },
+  {
+    "id": 14,
+    "language": "英",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin"
+  },
+  {
+    "id": 15,
+    "language": "日",
+    "title": "打上花火",
+    "artist": "DAOKO × 米津玄師"
+  },
+  {
+    "id": 16,
+    "language": "粵",
+    "title": "月半小夜曲",
+    "artist": "李克勤"
+  },
+  {
+    "id": 17,
+    "language": "中",
+    "title": "告白氣球",
+    "artist": "周杰倫"
+  },
+  {
+    "id": 18,
+    "language": "英",
+    "title": "Imagine",
+    "artist": "John Lennon"
+  },
+  {
+    "id": 19,
+    "language": "日",
+    "title": "殘酷な天使のテーゼ",
+    "artist": "高橋洋子"
+  },
+  {
+    "id": 20,
+    "language": "粵",
+    "title": "喜歡你",
+    "artist": "Beyond"
+  },
+  {
+    "id": 21,
+    "language": "中",
+    "title": "那些年",
+    "artist": "胡夏"
+  },
+  {
+    "id": 22,
+    "language": "英",
+    "title": "Yesterday",
+    "artist": "The Beatles"
+  },
+  {
+    "id": 23,
+    "language": "日",
+    "title": "世界に一つだけの花",
+    "artist": "SMAP"
+  },
+  {
+    "id": 24,
+    "language": "粵",
+    "title": "明年今日",
+    "artist": "陳奕迅"
+  }
+]
